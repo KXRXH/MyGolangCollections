@@ -86,26 +86,23 @@ func (vec *Vector[T]) Reverse() {
 //
 // Supported types: Int, Float, String
 //
+// Also you can pass sort function as the parameter.
+//
 // Example: [6, 2, 4, 1] -> [1, 2, 4, 6]
-func (vec *Vector[T]) Sort() {
-	v := reflect.TypeOf(vec.data)
-	switch v.Elem().Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int32, reflect.Int64:
-		vecInt := any(vec.data).([]int)
-		if !sort.IntsAreSorted(vecInt) {
-			sort.Ints(vecInt)
-		}
-	case reflect.Float32, reflect.Float64:
-		vecFloat64 := any(vec.data).([]float64)
-		if !sort.Float64sAreSorted(vecFloat64) {
-			sort.Float64s(vecFloat64)
-		}
+func (vec *Vector[T]) Sort(sortFunc ...func(i, j int) bool) {
+	if len(sortFunc) == 1 {
+		sort.SliceStable(vec.data, sortFunc[0])
+		return
+	}
+	t := reflect.TypeOf(vec.data).Elem().Kind()
+	switch t {
+	case reflect.Int:
+		sort.Ints(reflect.ValueOf(vec.data).Interface().([]int))
+	case reflect.Float64:
+		sort.Float64s(reflect.ValueOf(vec.data).Interface().([]float64))
 	case reflect.String:
-		vecString := any(vec.data).([]string)
-		if !sort.StringsAreSorted(vecString) {
-			sort.Strings(vecString)
-		}
+		sort.Strings(reflect.ValueOf(vec.data).Interface().([]string))
 	default:
-		log.Panicf("enable to sort vector of type %v\n", v.Elem().Kind())
+		log.Fatalf("enable to sort the vector of the type %v. try to pass sort function as the parameter.\n", t)
 	}
 }

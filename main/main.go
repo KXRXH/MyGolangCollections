@@ -1,17 +1,25 @@
+// This is testing file
+
 package main
 
 import (
-	"myCollections"
+	"fmt"
+	mc "myCollections"
 )
 
 func main() {
-	vector := myCollections.NewVector[int]()
-	for i := 0; i <= 10; i++ {
-		vector.PushBack(i)
+	pr := mc.NewPair[int](1, 2)
+	pr1 := pr.Copy()
+	pr.Swap()
+	println(pr.Sum())
+	fmt.Println(pr, pr1)
+	vec := mc.NewVector[uint]()
+	var i uint
+	for i = 0; i < 100; i++ {
+		vec.PushBack(i)
 	}
-	vector.Reverse()
-	println(vector.ToString())
-	vector.Sort()
-	vector.DeleteBack()
-	println(vector.ToString())
+	vec.Reverse()
+	vec.Sort()
+	println(vec.ToString())
+
 }
